@@ -83,6 +83,21 @@
 			'intersection with consecutive code points'
 		);
 		deepEqual(
+			regenerate(1, 2, 3, 10).intersection([10, 3, 1, 2]).data,
+			[1, 4, 10, 11],
+			'intersection with unsorted code points'
+		);
+		deepEqual(
+			regenerate(1, 2, 3).intersection([2, 2, 3, 1, 1]).data,
+			[1, 4],
+			'intersection with duplicate code points'
+		);
+		deepEqual(
+			regenerate(1, 2, 3).intersection([3, 1]).add(2).toArray(),
+			[1, 2, 3],
+			'intersection with unsorted code points leaves a usable set'
+		);
+		deepEqual(
 			regenerate(0, 1, 2, 3, 4, 5).remove(5).toArray(),
 			[0, 1, 2, 3, 4],
 			'remove that triggers an upper limit change in the data structure'
@@ -368,6 +383,54 @@
 			regenerate(0x61).add(0x61, 0x61, 0x62).add(0x61).toArray(),
 			[0x61, 0x62],
 			'Remove duplicates'
+		);
+		deepEqual(
+			regenerate([5, 3, 4, 3, 10, 5, 0]).data,
+			[0, 1, 3, 6, 10, 11],
+			'add with an unsorted array containing duplicates'
+		);
+		deepEqual(
+			regenerate(2, 3, 20).add([12, [1, 'a', [0x1D306]], regenerate(21, 22), 4]).data,
+			[1, 5, 12, 13, 20, 23, 0x61, 0x62, 0x1D306, 0x1D307],
+			'add with an array of nested arrays, symbols, and sets'
+		);
+		deepEqual(
+			regenerate(1, 2).add([new Number(3), new Number(3)]).data,
+			[1, 4],
+			'add with an array of Number objects'
+		);
+		deepEqual(
+			regenerate().addRange(0, 20).remove([15, 3, 4, 3, 0, 20, 16]).data,
+			[1, 3, 5, 15, 17, 20],
+			'remove with an unsorted array containing duplicates'
+		);
+		deepEqual(
+			regenerate().addRange(0, 5).remove([2, [4, regenerate(0)], null, 'a']).data,
+			[1, 2, 3, 4, 5, 6],
+			'remove with an array of nested arrays, sets, and null'
+		);
+		deepEqual(
+			regenerate(1, 2, 3).remove([-1, 2, 0x110000, NaN]).toArray(),
+			[1, 3],
+			'remove with an array ignores invalid code points'
+		);
+		var setBeforeInvalidAdd = regenerate(1, 2);
+		raises(
+			function() {
+				setBeforeInvalidAdd.add([3, 4, 0x110000]);
+			},
+			RangeError,
+			'add with an array containing an invalid code point'
+		);
+		deepEqual(
+			setBeforeInvalidAdd.toArray(),
+			[1, 2],
+			'add with an array containing an invalid code point leaves the set unchanged'
+		);
+		deepEqual(
+			regenerate().add(1).add(2).add(5).add(5).add(3).add(6).add(0).data,
+			[0, 4, 5, 7],
+			'add code points after, within, and before the last range'
 		);
 		deepEqual(
 			regenerate().toArray(),
