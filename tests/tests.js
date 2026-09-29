@@ -204,6 +204,30 @@
 			false,
 			'contains: false'
 		);
+		var multiRangeSet = regenerate(0, 5)
+			.addRange(10, 12)
+			.addRange(20, 22)
+			.addRange(30, 32)
+			.add(0x10FFFF);
+		deepEqual(
+			[0, 5, 10, 12, 20, 22, 30, 32, 0x10FFFF].map(function(codePoint) {
+				return multiRangeSet.contains(codePoint);
+			}),
+			[true, true, true, true, true, true, true, true, true],
+			'contains: first and last code point of each of several ranges'
+		);
+		deepEqual(
+			[-1, 1, 4, 6, 9, 13, 19, 23, 29, 33, 0x10FFFE, 0x110000].map(function(codePoint) {
+				return multiRangeSet.contains(codePoint);
+			}),
+			[false, false, false, false, false, false, false, false, false, false, false, false],
+			'contains: code points before, between, and after several ranges'
+		);
+		equal(
+			regenerate().contains(0),
+			false,
+			'contains: empty set'
+		);
 		deepEqual(
 			regenerate().addRange(0x0, 0x10FFFF).removeRange(0xA, 0x10FFFF).toArray(),
 			[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
