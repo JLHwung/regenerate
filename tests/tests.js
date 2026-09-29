@@ -98,6 +98,23 @@
 			'intersection with unsorted code points leaves a usable set'
 		);
 		deepEqual(
+			regenerate().addRange(0x60, 0x70).add(0x1D306)
+				.intersection(['a', [0x62, ['c']], regenerate(0x70, 0x71), '𝌆'])
+				.toArray(),
+			[0x61, 0x62, 0x63, 0x70, 0x1D306],
+			'intersection with an array of symbols, nested arrays, and sets'
+		);
+		deepEqual(
+			regenerate(1, 2, 3).intersection([-1, 2, 0x110000, NaN, null]).toArray(),
+			[2],
+			'intersection with an array ignores invalid code points'
+		);
+		deepEqual(
+			regenerate(1, 2, 3).intersection([]).toArray(),
+			[],
+			'intersection with an empty array'
+		);
+		deepEqual(
 			regenerate(0, 1, 2, 3, 4, 5).remove(5).toArray(),
 			[0, 1, 2, 3, 4],
 			'remove that triggers an upper limit change in the data structure'
