@@ -73,6 +73,51 @@
 			'remove(set)'
 		);
 		deepEqual(
+			regenerate().addRange(0, 2).addRange(6, 8).add(regenerate().addRange(3, 5)).data,
+			[0, 9],
+			'add(set) joining two ranges'
+		);
+		deepEqual(
+			regenerate().addRange(0, 2).addRange(4, 6).addRange(8, 10)
+				.add(regenerate().addRange(1, 9).add(20)).data,
+			[0, 11, 20, 21],
+			'add(set) with a range spanning several ranges'
+		);
+		deepEqual(
+			regenerate(1, 2).add(regenerate()).data,
+			[1, 3],
+			'add(set) with an empty set'
+		);
+		deepEqual(
+			regenerate().add(regenerate(1, 2)).data,
+			[1, 3],
+			'add(set) to an empty set'
+		);
+		deepEqual(
+			regenerate().addRange(0, 20).remove(regenerate(0, 5, 20).addRange(10, 12)).data,
+			[1, 5, 6, 10, 13, 20],
+			'remove(set) cutting several ranges out of one'
+		);
+		deepEqual(
+			regenerate().addRange(0, 2).addRange(4, 6).addRange(8, 10)
+				.remove(regenerate().addRange(1, 9)).data,
+			[0, 1, 10, 11],
+			'remove(set) with a range spanning several ranges'
+		);
+		deepEqual(
+			regenerate(1, 2).remove(regenerate(5)).data,
+			[1, 3],
+			'remove(set) with no overlap'
+		);
+		var addedSet = regenerate(3);
+		var addResult = regenerate(1).add(addedSet);
+		addedSet.add(2);
+		deepEqual(
+			addResult.toArray(),
+			[1, 3],
+			'add(set) result does not share data with the argument'
+		);
+		deepEqual(
 			regenerate(3, 10, 0x42, 0x1337, 0x1D306, 0x31337).intersection(setB).toArray(),
 			[0x1337, 0x31337],
 			'intersection(set)'
