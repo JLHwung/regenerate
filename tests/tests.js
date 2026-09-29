@@ -381,6 +381,31 @@
 			[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
 			'addRange causing several sub-ranges to be deleted'
 		);
+		deepEqual(
+			regenerate().addRange(0, 2).addRange(10, 12).addRange(20, 22).data,
+			[0, 3, 10, 13, 20, 23],
+			'addRange appending disjoint ranges'
+		);
+		deepEqual(
+			regenerate().addRange(0, 2).addRange(10, 12).addRange(13, 15).data,
+			[0, 3, 10, 16],
+			'addRange appending a range touching the last range'
+		);
+		deepEqual(
+			regenerate().addRange(0, 2).addRange(10, 12).addRange(11, 20).data,
+			[0, 3, 10, 21],
+			'addRange appending a range overlapping the last range'
+		);
+		deepEqual(
+			regenerate().addRange(0, 2).addRange(10, 20).addRange(12, 15).data,
+			[0, 3, 10, 21],
+			'addRange with a range within the last range'
+		);
+		deepEqual(
+			regenerate().addRange(0, 2).addRange(10, 12).addRange(10, 20).data,
+			[0, 3, 10, 21],
+			'addRange with a range starting at the start of the last range'
+		);
 		equal(
 			regenerate(0x08, 0x0A, 0x0C, 0x0D, 0x22, 0x27, 0x5C).toString(),
 			'[\\x08\\n\\f\\r"\'\\\\]',
